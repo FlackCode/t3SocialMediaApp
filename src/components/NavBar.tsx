@@ -12,7 +12,8 @@ import Link from "next/link";
 export default function NavBar() {
     const { user, signOut } = useUserData();
     return (
-        <div className="px-16 py-4 flex justify-between items-center">
+      <div className="flex justify-center">
+          <div className="px-4 pt-2 flex justify-between items-center w-full max-w-2xl">
           <h1 className="text-3xl font-semibold text-white">Social Media Name</h1>
           <div className="flex flex-row gap-2">
             <SignedOut>
@@ -41,5 +42,7 @@ export default function NavBar() {
             </SignedIn>
           </div>
         </div>
+      </div>
+        
     )
 }

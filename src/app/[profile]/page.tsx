@@ -2,27 +2,30 @@
 
 import Image from "next/image";
 import { useUserData } from "~/server/user";
-import { ArrowLeftIcon } from '@radix-ui/react-icons'
+import { ArrowLeftIcon, Pencil1Icon, FileTextIcon } from '@radix-ui/react-icons';
 import Link from "next/link";
+
 export default function ProfilePage() {
     const { user } = useUserData();
 
     return (
-        <div className="flex flex-col items-center px-4 sm:px-8 md:px-16 lg:px-32 py-8">
-            <div className="w-full max-w-2xl border border-neutral-300">
-                <div className="flex px-4 py-2 items-center gap-2">
-                    <Link href={'/'}><ArrowLeftIcon className="text-white w-8 h-8"/></Link>
+        <div className="flex flex-col items-center px-4 sm:px-8 md:px-16 lg:px-32 py-2">
+            <div className="w-full max-w-2xl bg-neutral-900 p-4 rounded-t-lg border border-neutral-700">
+                <div className="flex items-center gap-2 mb-4">
+                    <Link href={'/'}>
+                        <ArrowLeftIcon className="text-white w-8 h-8" />
+                    </Link>
                     <div>
                         <p className="text-white font-bold text-2xl">{user?.username}</p>
-                        <p className="text-white">0 posts</p>
+                        <p className="text-gray-400">0 posts</p>
                     </div>
                 </div>
                 <div className="flex items-center ml-4">
-                    <Image 
+                    <Image
                         src={user?.imageUrl ?? "/placeholderpfp.webp"}
                         width={256}
-                        height={256} 
-                        alt="Profile" 
+                        height={256}
+                        alt="Profile"
                         className="w-32 h-32 rounded-full border border-neutral-800 mb-2"
                     />
                 </div>
@@ -31,16 +34,20 @@ export default function ProfilePage() {
                     <p className="text-gray-400">@{user?.username ?? "username"}</p>
                 </div>
             </div>
-            <div className="w-full max-w-2xl">
-                <div className="text-center p-4 bg-neutral-800 border border-neutral-300">
-                    <p className="text-gray-400">
-                        Add user bio!
-                    </p>
+            <div className="w-full max-w-2xl bg-neutral-800 p-4 border border-neutral-700">
+                <div className="flex justify-center items-center">
+                    <p className="text-gray-400 text-center">Add user bio!</p>
+                    <button className="ml-2 p-2 rounded-full bg-neutral-700 hover:bg-neutral-600">
+                        <Pencil1Icon className="text-gray-400 w-5 h-5" />
+                    </button>
                 </div>
-                <div className="bg-neutral-800-800 p-4 space-y-2 border border-neutral-300">
+            </div>
+            <div className="w-full max-w-2xl bg-neutral-900 p-4 space-y-4 rounded-b-lg border border-neutral-700">
+                <div className="flex items-center gap-2">
+                    <FileTextIcon className="text-gray-400 w-6 h-6" />
                     <h2 className="text-xl font-semibold text-white">Posts</h2>
-                    <p className="text-gray-400">Currently empty...</p>
                 </div>
+                <p className="text-gray-400 text-center">Currently empty...</p>
             </div>
         </div>
     );
