@@ -6,7 +6,7 @@
 
 ### Backend
 - [] Create & Update Prisma Schema
-- [] Add Email Auth Provider
+- [x] Add Clerk Auth
 - [] Create TRPC Router for Posts
 - [] Handle all interactions
 - [] Add chat/messaging functionality

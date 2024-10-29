@@ -5,6 +5,10 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
+import {
+  ClerkProvider,
+} from '@clerk/nextjs'
+
 export const metadata: Metadata = {
   title: "Social Media App",
   description: "Social Media Website built by Flack",
@@ -17,7 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="bg-neutral-800">
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <ClerkProvider>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
