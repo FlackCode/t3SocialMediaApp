@@ -14,6 +14,7 @@
 
 ### Frontend
 - [x] Nav Bar
+- [x] Profile Page
 - [] Main Page
 - [] Login Page & Register Page
 - [] etc...

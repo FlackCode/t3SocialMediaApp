@@ -7,6 +7,7 @@ import {SignInButton,
     SignedOut,
 } from "@clerk/nextjs"
 import { useUserData } from "~/server/user";
+import Link from "next/link";
 
 export default function NavBar() {
     const { user, signOut } = useUserData();
@@ -30,7 +31,9 @@ export default function NavBar() {
                       <DropdownMenuContent>
                         <DropdownMenuLabel className="flex justify-center select-none">{user?.fullName}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Profile</DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link href={`${user?.fullName}`}>Profile</Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>Settings</DropdownMenuItem>
                         <DropdownMenuItem className="font-bold" onClick={() => signOut({redirectUrl: '/'})}>Sign out</DropdownMenuItem>
                       </DropdownMenuContent>
