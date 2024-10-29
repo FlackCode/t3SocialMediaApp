@@ -9,8 +9,8 @@ export default function ProfilePage() {
     const { user } = useUserData();
 
     return (
-        <div className="flex flex-col items-center px-4 sm:px-8 md:px-16 lg:px-32 py-2">
-            <div className="w-full max-w-2xl bg-neutral-900 p-4 rounded-t-lg border border-neutral-700">
+        <div className="flex flex-col items-center sm:px-8 md:px-16 lg:px-32 md:py-2">
+            <div className="w-full max-w-2xl bg-neutral-900 p-4 md:rounded-t-lg border border-neutral-700">
                 <div className="flex items-center gap-2 mb-4">
                     <Link href={'/'}>
                         <ArrowLeftIcon className="text-white w-8 h-8" />
@@ -42,7 +42,7 @@ export default function ProfilePage() {
                     </button>
                 </div>
             </div>
-            <div className="w-full max-w-2xl bg-neutral-900 p-4 space-y-4 rounded-b-lg border border-neutral-700">
+            <div className="w-full md:max-w-2xl bg-neutral-900 p-4 space-y-4 md:rounded-b-lg border border-neutral-700">
                 <div className="flex items-center gap-2">
                     <FileTextIcon className="text-gray-400 w-6 h-6" />
                     <h2 className="text-xl font-semibold text-white">Posts</h2>

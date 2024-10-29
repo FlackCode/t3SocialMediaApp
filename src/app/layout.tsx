@@ -10,7 +10,7 @@ import {
 } from '@clerk/nextjs'
 
 export const metadata: Metadata = {
-  title: "Social Media App",
+  title: "DevMedia",
   description: "Social Media Website built by Flack",
   //icons: [{ rel: "icon", url: "/favicon.ico" }],
 };

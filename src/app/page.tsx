@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useUserData } from "~/server/user";
 import { PaperclipIcon } from "lucide-react";
 import { FaceIcon } from "@radix-ui/react-icons";
+import Post from "~/components/Post";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
@@ -12,14 +13,15 @@ export default function Home() {
 
   const fillerPosts = {
     forYou: [
-      { id: 1, content: "Post 1 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholder.webp" },
-      { id: 2, content: "Post 2 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholder.webp" },
-      { id: 3, content: "Post 3 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholder.webp" },
+      { id: 1, content: "Post 1 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 2, content: "Post 2 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 3, content: "Post 3 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+
     ],
     following: [
-      { id: 4, content: "Post 1 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholder.webp" },
-      { id: 5, content: "Post 2 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholder.webp" },
-      { id: 6, content: "Post 3 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholder.webp" },
+      { id: 4, content: "Post 1 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 5, content: "Post 2 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 6, content: "Post 3 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
     ],
   };
 
@@ -28,7 +30,7 @@ export default function Home() {
   return (
     <div className="bg-neutral-800 min-h-screen">
       <NavBar />
-      <div className="flex flex-col items-center px-4 sm:px-8 md:px-16 lg:px-32 py-2">
+      <div className="flex flex-col items-center  sm:px-8 md:px-16 lg:px-32 py-4">
         
         <div className="w-full max-w-2xl bg-neutral-900 rounded-t-lg border border-neutral-700">
           <div className="flex justify-around">
@@ -47,7 +49,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full max-w-2xl bg-neutral-900 p-4 border-t-0 border border-neutral-700 rounded-b-lg mt-4">
+        <div className="w-full md:max-w-2xl bg-neutral-900 p-4 border-t-0 border border-neutral-700 ">
           <div className="flex items-start gap-4">
               <Image
                 src={imageUrl ? imageUrl : "/placeholderpfp.webp"}
@@ -82,11 +84,9 @@ export default function Home() {
             </div>
           </div>
         
-        <div className="w-full max-w-2xl bg-neutral-900 p-4 border border-neutral-700 space-y-4">
+        <div className="w-full md:max-w-2xl bg-neutral-900 p-4 border border-neutral-700 space-y-4">
           {displayedPosts.map((post) => (
-            <div key={post.id} className="bg-neutral-800 p-4 rounded-lg border border-neutral-700">
-              <p className="text-white">{post.content}</p>
-            </div>
+            <Post key={post.id} post={post} />
           ))}
         </div>
         
