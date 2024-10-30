@@ -9,6 +9,7 @@ import Post from "~/components/Post";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
+  const [visiblePosts, setVisiblePosts] = useState(3)
   const { imageUrl } = useUserData();
 
   const fillerPosts = {
@@ -16,16 +17,26 @@ export default function Home() {
       { id: 1, content: "Post 1 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
       { id: 2, content: "Post 2 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
       { id: 3, content: "Post 3 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 4, content: "Post 4 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 5, content: "Post 5 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 6, content: "Post 6 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
 
     ],
     following: [
-      { id: 4, content: "Post 1 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 5, content: "Post 2 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 6, content: "Post 3 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 7, content: "Post 1 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 8, content: "Post 2 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 9, content: "Post 3 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 10, content: "Post 4 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 11, content: "Post 5 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
+      { id: 12, content: "Post 6 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
     ],
   };
 
   const displayedPosts = activeTab === "forYou" ? fillerPosts.forYou : fillerPosts.following;
+
+  const handleLoadMore = () => {
+    setVisiblePosts(prev => prev + 3);
+  };
 
   return (
     <div className="bg-neutral-800 min-h-screen">
@@ -84,11 +95,19 @@ export default function Home() {
             </div>
           </div>
         
-        <div className="w-full md:max-w-2xl bg-neutral-900 p-4 border border-neutral-700 space-y-4">
-          {displayedPosts.map((post) => (
-            <Post key={post.id} post={post} />
-          ))}
-        </div>
+          <div className="w-full md:max-w-2xl bg-neutral-900 p-4 border border-neutral-700 space-y-4">
+            {displayedPosts.slice(0, visiblePosts).map((post) => (
+              <Post key={post.id} post={post} />
+            ))}
+            {visiblePosts < displayedPosts.length && (
+              <button 
+                onClick={handleLoadMore} 
+                className="w-full py-2 mt-2 text-center bg-neutral-700 text-white rounded-lg hover:bg-neutral-800 transition-colors duration-200"
+              >
+                Load More
+              </button>
+            )}
+          </div>
         
       </div>
     </div>
