@@ -7,6 +7,7 @@
 ### Backend
 - [x] Create & Update Prisma Schema
 - [x] Add Clerk Auth
+- [x] Add Clerk User to db upon sign-up
 - [] Create TRPC Router for Posts
 - [] Handle all interactions
 - [] Add chat/messaging functionality

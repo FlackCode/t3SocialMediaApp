@@ -12,33 +12,38 @@ datasource db {
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id          Int         @id @default(autoincrement())
+    name        String
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
 
-    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdBy   User        @relation(fields: [createdById], references: [id])
     createdById String
 
-    comments     Comment[]
-    likes        Like[]
-    shares       Share[]
+    comments    Comment[]
+    likes       Like[]
+    shares      Share[]
 
     @@index([name])
 }
 
 model User {
     id            String    @id @default(cuid())
-    name          String?
+    clerkId       String?   @unique
+    userName      String?
+    fullName      String?
     email         String?   @unique
-    emailVerified DateTime?
     image         String?
-    accounts      Account[]
+    // accounts      Account[]
     sessions      Session[]
     posts         Post[]
     comments      Comment[]
     likes         Like[]
     shares        Share[]
+    followers     Follow[]  @relation("FollowerRelation")
+    following     Follow[]  @relation("FollowingRelation")
+    chats         Chat[]    @relation("UserChats")
+    messages      Message[]
 }
 
 model Comment {
@@ -73,25 +78,25 @@ model Share {
     @@unique([postId, userId]) // A user can share a post only once
 }
 
-// Necessary for Next auth
-model Account {
-    id                       String  @id @default(cuid())
-    userId                   String
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
-    expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String? // @db.Text
-    session_state            String?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    refresh_token_expires_in Int?
+// // Necessary for Next auth
+// model Account {
+//     id                       String  @id @default(cuid())
+//     userId                   String
+//     type                     String
+//     provider                 String
+//     providerAccountId        String
+//     refresh_token            String? // @db.Text
+//     access_token             String? // @db.Text
+//     expires_at               Int?
+//     token_type               String?
+//     scope                    String?
+//     id_token                 String? // @db.Text
+//     session_state            String?
+//     user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+//     refresh_token_expires_in Int?
 
-    @@unique([provider, providerAccountId])
-}
+//     @@unique([provider, providerAccountId])
+// }
 
 model Session {
     id           String   @id @default(cuid())
@@ -107,4 +112,32 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Follow {
+  id            Int         @id @default(autoincrement())
+  follower      User        @relation("FollowerRelation", fields: [followerId], references: [id])
+  followerId    String
+  following     User        @relation("FollowingRelation", fields: [followingId], references: [id])
+  followingId   String
+  createdAt     DateTime    @default(now())
+
+  @@unique([followerId, followingId]) // Prevent duplicate follows
+}
+
+model Chat {
+  id            Int         @id @default(autoincrement())
+  participants  User[]      @relation("UserChats")
+  messages      Message[]
+  createdAt     DateTime    @default(now())
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  sender    User     @relation(fields: [senderId], references: [id])
+  senderId  String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  chatId    Int
+  sentAt    DateTime @default(now())
 }
