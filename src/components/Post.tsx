@@ -7,10 +7,18 @@ interface PostProps {
     id: number;
     content: string;
     username: string;
-    user: string;
+    fullName: string;
     created: string;
     imageUrl: string;
   };
+}
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return date.toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  })
 }
 
 export default function Post({ post }: PostProps) {
@@ -25,10 +33,10 @@ export default function Post({ post }: PostProps) {
       />
       <div className="flex flex-col w-full">
         <div className="flex items-center gap-2">
-          <p className="text-white font-bold">{post.username}</p>
-          <p className="text-gray-400">{post.user}</p>
+          <p className="text-white font-bold">{post.fullName}</p>
+          <p className="text-gray-400">@{post.username}</p>
           <span className="text-gray-500">•</span>
-          <p className="text-gray-500">{post.created}</p>
+          <p className="text-gray-500">{formatDate(post.created)}</p>
         </div>
         <p className="text-white">{post.content}</p>
 

@@ -13,11 +13,12 @@ datasource db {
 
 model Post {
     id          Int         @id @default(autoincrement())
-    name        String
+    name        String?
     createdAt   DateTime    @default(now())
     updatedAt   DateTime    @updatedAt
+    content     String
 
-    createdBy   User        @relation(fields: [createdById], references: [id])
+    createdBy   User        @relation(fields: [createdById], references: [clerkId])
     createdById String
 
     comments    Comment[]
@@ -34,6 +35,7 @@ model User {
     fullName      String?
     email         String?   @unique
     image         String?
+    bio           String?
     // accounts      Account[]
     sessions      Session[]
     posts         Post[]

@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
         userName: user.username ?? '',
         email: user.emailAddresses[0]?.emailAddress ?? '',
         image: user.imageUrl ?? '',
+        bio: '',
       },
     });
   }

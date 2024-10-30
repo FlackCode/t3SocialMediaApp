@@ -6,33 +6,15 @@ import { useUserData } from "~/server/user";
 import { PaperclipIcon } from "lucide-react";
 import { FaceIcon } from "@radix-ui/react-icons";
 import Post from "~/components/Post";
+import useFetchPosts from "~/hooks/useFetchPosts";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
   const [visiblePosts, setVisiblePosts] = useState(3)
   const { imageUrl } = useUserData();
+  const { posts, loading, error } = useFetchPosts();
 
-  const fillerPosts = {
-    forYou: [
-      { id: 1, content: "Post 1 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 2, content: "Post 2 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 3, content: "Post 3 in For You", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 4, content: "Post 4 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 5, content: "Post 5 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 6, content: "Post 6 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-
-    ],
-    following: [
-      { id: 7, content: "Post 1 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 8, content: "Post 2 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 9, content: "Post 3 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 10, content: "Post 4 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 11, content: "Post 5 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-      { id: 12, content: "Post 6 in Following", username: "test", user: "@testing", created:"1h", imageUrl: "/placeholderpfp.webp" },
-    ],
-  };
-
-  const displayedPosts = activeTab === "forYou" ? fillerPosts.forYou : fillerPosts.following;
+  const displayedPosts = posts;
 
   const handleLoadMore = () => {
     setVisiblePosts(prev => prev + 3);
