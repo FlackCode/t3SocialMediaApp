@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
+
 import {
   ClerkProvider,
 } from '@clerk/nextjs'

@@ -5,7 +5,7 @@
 - [x] Create App
 
 ### Backend
-- [] Create & Update Prisma Schema
+- [x] Create & Update Prisma Schema
 - [x] Add Clerk Auth
 - [] Create TRPC Router for Posts
 - [] Handle all interactions
