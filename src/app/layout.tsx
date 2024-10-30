@@ -13,7 +13,6 @@ import {
 export const metadata: Metadata = {
   title: "DevMedia",
   description: "Social Media Website built by Flack",
-  //icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
 export default function RootLayout({

@@ -7,19 +7,18 @@ const prisma = new PrismaClient();
 export async function GET(req: NextRequest) {
     try {
         const { userId } = getAuth(req);
+
         const posts = await prisma.post.findMany({
             where: {
-                createdById: {
-                    not: userId!,
-                }
+                createdById: userId!,
             },
             include: {
                 createdBy: {
                     select: {
                         id: true,
                         userName: true,
-                        image: true,
                         fullName: true,
+                        image: true,
                     },
                 },
                 comments: true,
@@ -29,7 +28,7 @@ export async function GET(req: NextRequest) {
                 createdAt: 'desc',
             },
         });
-        
+
         return new Response(JSON.stringify(posts), {
             status: 200,
             headers: {
@@ -37,9 +36,9 @@ export async function GET(req: NextRequest) {
             },
         });
     } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error fetching my posts:", error);
 
-        return new Response(JSON.stringify({ error: "Failed to fetch posts" }), {
+        return new Response(JSON.stringify({ error: "Failed to fetch my posts" }), {
             status: 500,
             headers: {
                 "Content-Type": "application/json",

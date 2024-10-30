@@ -12,9 +12,9 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
   const [visiblePosts, setVisiblePosts] = useState(3)
   const { imageUrl } = useUserData();
-  const { posts, loading, error } = useFetchPosts();
+  const { posts: allPosts } = useFetchPosts('all');
 
-  const displayedPosts = posts;
+  const displayedPosts = allPosts;
 
   const handleLoadMore = () => {
     setVisiblePosts(prev => prev + 3);

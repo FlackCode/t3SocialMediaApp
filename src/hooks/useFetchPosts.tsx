@@ -21,7 +21,7 @@ interface Post {
     imageUrl: string;
 }
 
-const useFetchPosts = () => {
+const useFetchPosts = (type: 'all' | 'mine') => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -29,7 +29,8 @@ const useFetchPosts = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await fetch('/api/getPosts');
+                const url = type === 'mine' ? '/api/getMyPosts' : '/api/getPosts';
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error('Failed to fetch posts');
                 }
@@ -53,7 +54,7 @@ const useFetchPosts = () => {
         };
 
         void fetchPosts();
-    }, []);
+    }, [type]);
 
     return { posts, loading, error };
 };

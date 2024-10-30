@@ -1,4 +1,3 @@
-// components/NavBar.tsx
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -9,11 +8,11 @@ import { useUserData } from "~/server/user";
 import Link from "next/link";
 import { PlusCircleIcon } from "lucide-react";
 import { useState } from "react";
-import PostModal from "~/components/PostModal"; // Import the PostModal
+import PostModal from "~/components/PostModal";
 
 export default function NavBar() {
   const { user, signOut } = useUserData();
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="flex justify-center">
@@ -29,7 +28,7 @@ export default function NavBar() {
             <Button 
               variant="outline" 
               className="flex items-center gap-1"
-              onClick={() => setIsModalOpen(true)} // Open modal on click
+              onClick={() => setIsModalOpen(true)}
             >
               <PlusCircleIcon className="w-5 h-5" />
               <span className="font-bold">Add Post</span>

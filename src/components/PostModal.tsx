@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "~/components/ui/button";
-import usePostForm from "../hooks/usePostForm"; // Adjust the import path based on your project structure
+import usePostForm from "../hooks/usePostForm";
 
 interface PostModalProps {
   isOpen: boolean;
