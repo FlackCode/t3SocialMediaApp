@@ -9,7 +9,7 @@ import HomePostForm from "~/components/HomePostForm";
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
   const [visiblePosts, setVisiblePosts] = useState(3)
-  const { imageUrl, user, clerkId } = useUserData();
+  const { imageUrl, clerkId } = useUserData();
   const { posts: allPosts } = useFetchPosts('all');
 
   const displayedPosts = allPosts;

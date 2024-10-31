@@ -9,35 +9,58 @@ import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { Input } from "~/components/ui/input";
 
+interface PrismaUser {
+    id: string;
+    clerkId: string;
+    fullName: string;
+    userName: string;
+    email: string;
+    image: string;
+    bio: string | null;
+  }
+
 export default function SetupPage() {
   const router = useRouter();
   const { user } = useUser();
   
   const [formData, setFormData] = useState({
-    fullName: user?.fullName ?? "",
-    username: user?.username ?? "",
+    fullName: "",
+    username: "",
     bio: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isUserSetupComplete, setIsUserSetupComplete] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      console.log("User data:", user); // Log user data for debugging
-      const isComplete = user.fullName && user.username;
-      if (isComplete) {
-        setIsUserSetupComplete(true);
-        router.push("/");
-      } else {
-        // If user data is incomplete, stay on the setup page
-        setIsUserSetupComplete(false);
+    const fetchUserData = async () => {
+      if (user) {
+        try {
+          const response = await fetch(`/api/user/${user.id}`);
+          if (response.ok) {
+            const userData = await response.json() as PrismaUser;
+            setFormData({
+              fullName: userData.fullName || "",
+              username: userData.userName || "",
+              bio: userData.bio ?? "",
+            });
+            const isComplete = userData.fullName && userData.userName;
+            if (isComplete) {
+              setIsUserSetupComplete(true);
+              router.push("/");
+            }
+          } else {
+            console.error("Failed to fetch user data:", await response.text());
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
       }
-    }
+    };
+
+    void fetchUserData();
   }, [user, router]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -45,7 +68,7 @@ export default function SetupPage() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
   
