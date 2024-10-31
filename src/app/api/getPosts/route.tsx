@@ -6,29 +6,50 @@ const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
     try {
+        let posts;
         const { userId } = getAuth(req);
-        const posts = await prisma.post.findMany({
-            where: {
-                createdById: {
-                    not: userId!,
-                }
-            },
-            include: {
-                createdBy: {
-                    select: {
-                        id: true,
-                        userName: true,
-                        image: true,
-                        fullName: true,
-                    },
+        if (userId) {
+            posts = await prisma.post.findMany({
+                where: {
+                    createdById: {
+                        not: userId,
+                    }
                 },
-                comments: true,
-                likes: true,
-            },
-            orderBy: {
-                createdAt: 'desc',
-            },
-        });
+                include: {
+                    createdBy: {
+                        select: {
+                            id: true,
+                            userName: true,
+                            image: true,
+                            fullName: true,
+                        },
+                    },
+                    comments: true,
+                    likes: true,
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                },
+            });
+        } else {
+            posts = await prisma.post.findMany({
+                include: {
+                    createdBy: {
+                        select: {
+                            id: true,
+                            userName: true,
+                            image: true,
+                            fullName: true,
+                        },
+                    },
+                    comments: true,
+                    likes: true,
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                },
+            });
+        }
         
         return new Response(JSON.stringify(posts), {
             status: 200,

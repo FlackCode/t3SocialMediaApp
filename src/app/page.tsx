@@ -1,17 +1,15 @@
 "use client"
 import NavBar from "~/components/NavBar";
 import { useState } from "react";
-import Image from "next/image";
 import { useUserData } from "~/server/user";
-import { PaperclipIcon } from "lucide-react";
-import { FaceIcon } from "@radix-ui/react-icons";
 import Post from "~/components/Post";
 import useFetchPosts from "~/hooks/useFetchPosts";
+import HomePostForm from "~/components/HomePostForm";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
   const [visiblePosts, setVisiblePosts] = useState(3)
-  const { imageUrl } = useUserData();
+  const { imageUrl, user, clerkId } = useUserData();
   const { posts: allPosts } = useFetchPosts('all');
 
   const displayedPosts = allPosts;
@@ -42,40 +40,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full md:max-w-2xl bg-neutral-900 p-4 border-t-0 border border-neutral-700 ">
-          <div className="flex items-start gap-4">
-              <Image
-                src={imageUrl ? imageUrl : "/placeholderpfp.webp"}
-                width={96}
-                height={96}
-                alt="User Profile Picture"
-                className="w-12 h-12 rounded-full bg-neutral-600"
-              />
-              <div className="flex flex-col w-full">
-                <textarea
-                  placeholder="Tell the world about your day!"
-                  className="w-full h-20 p-2 rounded-lg bg-neutral-800 border border-neutral-700 text-white resize-none outline-none placeholder-gray-400"
-                ></textarea>
-                <div className="flex justify-between mt-2">
-                  <div className="flex items-center gap-2">
-                    <button
-                      className="p-2 rounded-lg hover:bg-neutral-700/30 transition-colors duration-200"
-                      aria-label="Upload Image">
-                      <PaperclipIcon className="text-white w-5 h-5" />
-                    </button>
-                    <button
-                      className="p-2 rounded-lg hover:bg-neutral-700/30 transition-colors duration-200"
-                      aria-label="Add Emoji">
-                      <FaceIcon className="text-white w-5 h-5" />
-                    </button>
-                  </div>
-                  <button className="px-4 py-1 bg-neutral-900 border border-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors duration-200">
-                    Post
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+        <HomePostForm userId={clerkId} imageUrl={imageUrl} />
         
           <div className="w-full md:max-w-2xl bg-neutral-900 p-4 border border-neutral-700 space-y-4">
             {displayedPosts.slice(0, visiblePosts).map((post) => (

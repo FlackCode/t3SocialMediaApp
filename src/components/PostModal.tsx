@@ -6,7 +6,7 @@ import usePostForm from "../hooks/usePostForm";
 interface PostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  userId: string;
+  userId?: string;
 }
 
 const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, userId }) => {
@@ -16,7 +16,7 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, userId }) => {
     isSubmitting,
     error,
     handleSubmit,
-  } = usePostForm(userId);
+  } = usePostForm(userId ?? '');
 
   if (!isOpen) return null;
 

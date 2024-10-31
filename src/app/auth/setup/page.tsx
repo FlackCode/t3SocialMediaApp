@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -19,6 +19,21 @@ export default function SetupPage() {
     bio: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isUserSetupComplete, setIsUserSetupComplete] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      console.log("User data:", user); // Log user data for debugging
+      const isComplete = user.fullName && user.username;
+      if (isComplete) {
+        setIsUserSetupComplete(true);
+        router.push("/");
+      } else {
+        // If user data is incomplete, stay on the setup page
+        setIsUserSetupComplete(false);
+      }
+    }
+  }, [user, router]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -37,7 +52,7 @@ export default function SetupPage() {
     try {
       const queryParams = new URLSearchParams({
         fullName: formData.fullName,
-        username: formData.username.replace('@', ''), // Remove @ if present
+        username: formData.username.replace('@', ''),
         bio: formData.bio,
       });
   
@@ -58,6 +73,8 @@ export default function SetupPage() {
       setIsLoading(false);
     }
   };
+
+  if (isUserSetupComplete) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-800">

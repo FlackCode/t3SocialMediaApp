@@ -22,13 +22,13 @@ export default function ProfilePage() {
                         <ArrowLeftIcon className="text-white w-8 h-8" />
                     </Link>
                     <div>
-                        <p className="text-white font-bold text-2xl">{user?.username}</p>
+                        <p className="text-white font-bold text-2xl">{user?.userName}</p>
                         <p className="text-gray-400">{myPosts.length} posts</p>
                     </div>
                 </div>
                 <div className="flex items-center ml-4">
                     <Image
-                        src={user?.imageUrl ?? "/placeholderpfp.webp"}
+                        src={user?.image ?? "/placeholderpfp.webp"}
                         width={256}
                         height={256}
                         alt="Profile"
@@ -38,7 +38,7 @@ export default function ProfilePage() {
                 <div className="ml-4 mb-2 flex justify-between items-center">
                     <div>
                         <h1 className="text-xl font-bold text-white">{user?.fullName}</h1>
-                        <p className="text-gray-400">@{user?.username ?? "username"}</p>
+                        <p className="text-gray-400">@{user?.userName ?? "username"}</p>
                     </div>
                     <button
                         className="p-2 rounded-full bg-neutral-700 hover:bg-neutral-600"

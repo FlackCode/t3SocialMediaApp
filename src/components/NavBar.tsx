@@ -11,7 +11,7 @@ import { useState } from "react";
 import PostModal from "~/components/PostModal";
 
 export default function NavBar() {
-  const { user, signOut } = useUserData();
+  const { user, signOut, imageUrl, clerkId } = useUserData();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -36,7 +36,7 @@ export default function NavBar() {
             <DropdownMenu>
               <DropdownMenuTrigger className="ml-2">
                 <Avatar>
-                  <AvatarImage src={user?.imageUrl} />
+                  <AvatarImage src={imageUrl} />
                   <AvatarFallback>AV</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
@@ -53,7 +53,7 @@ export default function NavBar() {
           </SignedIn>
         </div>
       </div>
-      {user && <PostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} userId={user.id} />}
+      {user && <PostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} userId={clerkId} />}
     </div>
   );
 }

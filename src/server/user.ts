@@ -1,61 +1,85 @@
-"use client";
+// ~/server/user.ts
+import { useState, useEffect } from 'react';
+import { useUser, useClerk } from "@clerk/nextjs";
 
-import { useClerk, useUser } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
-
-interface UserResponse {
-    bio: string;
-    id?: string;
-    clerkId?: string;
-    fullName?: string;
-    userName?: string;
-    email?: string;
-    image?: string;
+interface PrismaUser {
+  id: string;
+  clerkId: string;
+  fullName: string;
+  userName: string;
+  email: string;
+  image: string;
+  bio: string | null;
 }
 
-export const useUserData = () => {
-    const { user } = useUser();
-    const { signOut } = useClerk();
-    const imageUrl = user?.imageUrl;
-    const [bio, setBio] = useState<string>("");
+export function useUserData() {
+  const { user: clerkUser } = useUser();
+  const [user, setUser] = useState<PrismaUser | null>(null);
+  const [bio, setBio] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { signOut } = useClerk();
 
-    useEffect(() => {
-        const fetchBio = async () => {
-            if (user) {
-                try {
-                    const response = await fetch(`/api/user/${user.id}`);
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch bio");
-                    }
-                    const data = (await response.json()) as UserResponse;
-                    setBio(data.bio ?? "");
-                } catch (error) {
-                    console.error(error);
-                }
-            }
-        };
-        void fetchBio();
-    }, [user]);
+  useEffect(() => {
+    async function fetchUserData() {
+      if (!clerkUser?.id) {
+        setIsLoading(false);
+        return;
+      }
 
-    const updateBio = async (newBio: string) => {
-        if (!user) return;
-        
-        try {
-            const response = await fetch('/api/user/updateBio', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ bio: newBio }),
-            });
-            if (!response.ok) {
-                throw new Error("Failed to update bio");
-            }
-            setBio(newBio);
-        } catch (error) {
-            console.error(error);
+      try {
+        const response = await fetch(`/api/user/${clerkUser.id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
         }
-    };
+        const userData = (await response.json()) as PrismaUser;
 
-    return { user, signOut, imageUrl, bio, setBio, updateBio };
-};
+        setUser(userData);
+        setBio(userData.bio ?? '');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching user data:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    void fetchUserData();
+  }, [clerkUser?.id]);
+
+  const updateBio = async (newBio: string) => {
+    if (!user?.clerkId) return;
+
+    try {
+      const response = await fetch(`/api/user/${user.clerkId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ bio: newBio }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update bio');
+      }
+
+      const updatedUser = (await response.json()) as PrismaUser;
+      setUser(updatedUser);
+      setBio(newBio);
+    } catch (err) {
+      console.error('Error updating bio:', err);
+      throw err;
+    }
+  };
+
+  return {
+    user,
+    bio,
+    updateBio,
+    isLoading,
+    error,
+    imageUrl: user?.image ?? clerkUser?.imageUrl,
+    signOut,
+    clerkId: clerkUser?.id,
+  };
+}
