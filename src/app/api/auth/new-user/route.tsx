@@ -17,10 +17,10 @@ export async function GET(request: NextRequest) {
 
   const searchParams = request.nextUrl.searchParams;
   const fullName = searchParams.get('fullName');
-  const username = searchParams.get('username');
+  const userName = searchParams.get('userName');
   const bio = searchParams.get('bio');
 
-  if (!fullName || !username) {
+  if (!fullName || !userName) {
     return new NextResponse('Missing required fields', { status: 400 });
   }
 
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         data: {
           clerkId: user.id,
           fullName: fullName,
-          userName: username,
+          userName: userName,
           email: user.emailAddresses[0]?.emailAddress ?? '',
           image: user.imageUrl ?? '',
           bio: bio ?? '',
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
         where: { clerkId: user.id },
         data: {
           fullName: fullName,
-          userName: username,
+          userName: userName,
           bio: bio ?? '',
         },
       });

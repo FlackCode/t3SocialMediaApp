@@ -48,9 +48,9 @@ export default function SetupPage() {
                         <div className="space-y-2">
                             <Label htmlFor="username" className="text-white">Username</Label>
                             <Input
-                                id="username"
-                                name="username"
-                                value={formData.username}
+                                id="userName"
+                                name="userName"
+                                value={formData.userName}
                                 onChange={handleChange}
                                 required
                                 placeholder="Choose a username"

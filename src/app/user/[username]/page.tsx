@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ArrowLeftIcon, FileTextIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from "react";
 import Post from "~/components/Post";
-import { type Post as PostType, type User } from "~/types";
+import { type FollowStatusResponse, type ToggleFollowResponse, type Post as PostType, type User } from "~/types";
 import { useParams, useRouter } from "next/navigation";
 
 export default function UserProfilePage() {
@@ -12,25 +12,56 @@ export default function UserProfilePage() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [followersCount, setFollowersCount] = useState(0);
+    const [followingCount, setFollowingCount] = useState(0);
     const params = useParams();
     const router = useRouter();
     const username = params.username as string;
 
+    const handleFollowToggle = async () => {
+        if (!user) return;
+    
+        try {
+            const response = await fetch(`/api/user/toggleFollow/${username}`, {
+                method: 'POST',
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to toggle follow status");
+            }
+    
+            const data = (await response.json()) as ToggleFollowResponse;
+            setIsFollowing(data.followed); // update to use 'followed' from response
+            setFollowersCount(data.followers); // set followers count
+            setFollowingCount(data.followingCount); // set following count
+        } catch (err) {
+            console.error("Error toggling follow status", err);
+        }
+    };    
+    
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const userResponse = await fetch(`/api/user/fetchByUsername/${username}`);
-                const postsResponse = await fetch(`/api/user/fetchByUsername/${username}/posts`);
-
-                if (!userResponse.ok || !postsResponse.ok) {
+                const [userResponse, postsResponse, followStatusResponse] = await Promise.all([
+                    fetch(`/api/user/fetchByUsername/${username}`),
+                    fetch(`/api/user/fetchByUsername/${username}/posts`),
+                    fetch(`/api/user/followStatus/${username}`)
+                ]);
+    
+                if (!userResponse.ok || !postsResponse.ok || !followStatusResponse.ok) {
                     throw new Error("Failed to fetch user data");
                 }
-
+    
                 const userData = await userResponse.json() as User;
                 const postsData = await postsResponse.json() as PostType[];
-
+                const followStatusData = await followStatusResponse.json() as FollowStatusResponse;
+                console.log(followStatusData);
                 setUser(userData);
                 setPosts(postsData);
+                setIsFollowing(followStatusData.isFollowing);
+                setFollowersCount(followStatusData.followersCount);
+                setFollowingCount(followStatusData.followingCount);
             } catch (err) {
                 setError("Error fetching user data");
                 console.error(err);
@@ -38,7 +69,7 @@ export default function UserProfilePage() {
                 setLoading(false);
             }
         };
-
+    
         void fetchUserData();
     }, [username]);
 
@@ -53,7 +84,7 @@ export default function UserProfilePage() {
                     <button onClick={() => router.back()}>
                         <ArrowLeftIcon className="text-white w-8 h-8" />
                     </button>
-                    <div>
+                    <div className="flex-grow">
                         <p className="text-white font-bold text-2xl">{user.userName}</p>
                         <p className="text-gray-400">{posts.length} posts</p>
                     </div>
@@ -71,6 +102,26 @@ export default function UserProfilePage() {
                     <div>
                         <h1 className="text-xl font-bold text-white">{user.fullName}</h1>
                         <p className="text-gray-400">@{user.userName}</p>
+                    </div>
+                    <button 
+                        onClick={handleFollowToggle}
+                        className={`px-4 py-2 rounded-full text-sm font-semibold 
+                            ${isFollowing 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-white text-black hover:bg-gray-200'
+                            }`}
+                    >
+                        {isFollowing ? 'Following' : 'Follow'}
+                    </button>
+                </div>
+                <div className="flex ml-4 space-x-4 text-gray-400">
+                    <div>
+                        <span className="font-bold text-white mr-1">{followingCount}</span>
+                        Following
+                    </div>
+                    <div>
+                        <span className="font-bold text-white mr-1">{followersCount}</span>
+                        Followers
                     </div>
                 </div>
             </div>

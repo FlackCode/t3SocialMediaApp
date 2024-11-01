@@ -71,3 +71,15 @@ export interface Message {
   chatId: number;
   sentAt: Date;
 }
+
+export interface FollowStatusResponse {
+  isFollowing: boolean;
+  followersCount: number;
+  followingCount: number;
+}
+
+export interface ToggleFollowResponse {
+  followed: boolean;
+  followers: number;
+  followingCount: number;
+}

@@ -17,7 +17,7 @@ const useUserProfile = () => {
     const { user } = useUser();
     const [formData, setFormData] = useState({
         fullName: "",
-        username: "",
+        userName: "",
         bio: "",
     });
     const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +32,7 @@ const useUserProfile = () => {
                         const userData = (await response.json()) as PrismaUser;
                         setFormData({
                             fullName: userData.fullName || "",
-                            username: userData.userName || "",
+                            userName: userData.userName || "",
                             bio: userData.bio ?? "",
                         });
                         const isComplete = userData.fullName && userData.userName;
@@ -59,7 +59,7 @@ const useUserProfile = () => {
         try {
             const queryParams = new URLSearchParams({
                 fullName: formData.fullName,
-                username: formData.username.replace('@', ''),
+                userName: formData.userName.replace('@', ''),
                 bio: formData.bio,
             });
 
