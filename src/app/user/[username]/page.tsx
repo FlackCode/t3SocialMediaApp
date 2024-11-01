@@ -32,9 +32,9 @@ export default function UserProfilePage() {
             }
     
             const data = (await response.json()) as ToggleFollowResponse;
-            setIsFollowing(data.followed); // update to use 'followed' from response
-            setFollowersCount(data.followers); // set followers count
-            setFollowingCount(data.followingCount); // set following count
+            setIsFollowing(data.followed);
+            setFollowersCount(data.followers);
+            setFollowingCount(data.following);
         } catch (err) {
             console.error("Error toggling follow status", err);
         }

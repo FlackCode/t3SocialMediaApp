@@ -81,5 +81,5 @@ export interface FollowStatusResponse {
 export interface ToggleFollowResponse {
   followed: boolean;
   followers: number;
-  followingCount: number;
+  following: number;
 }

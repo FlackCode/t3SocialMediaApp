@@ -38,12 +38,23 @@ model User {
     comments      Comment[]
     likes         Like[]
     shares        Share[]
-    followers     Follow[]  @relation("FollowerRelation")
-    following     Follow[]  @relation("FollowingRelation")
+    followers     Follow[]  @relation("followingRelation")
+    following     Follow[]  @relation("followerRelation")
+
     chats         Chat[]    @relation("UserChats")
     messages      Message[]
 
     @@index([userName])
+}
+
+model Follow {
+  id                String    @id @default(cuid())
+  followedByUserId  String
+  followingUserId   String
+  createdAt         DateTime  @default(now())
+
+  followedByUser    User      @relation("followerRelation", fields: [followedByUserId], references: [clerkId])
+  followingUser     User      @relation("followingRelation", fields: [followingUserId], references: [clerkId])
 }
 
 model Comment {
@@ -92,19 +103,6 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
-}
-
-model Follow {
-  id            Int         @id @default(autoincrement())
-  follower      User        @relation("FollowingRelation", fields: [followingId], references: [clerkId])
-  followerId    String
-  following     User        @relation("FollowerRelation", fields: [followerId], references: [clerkId])
-  followingId   String
-  createdAt     DateTime    @default(now())
-
-  @@unique([followerId, followingId])
-  @@index([followerId])
-  @@index([followingId])
 }
 
 model Chat {

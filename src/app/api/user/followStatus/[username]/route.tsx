@@ -7,8 +7,8 @@ export async function GET(
     { params }: { params: { username: string } }
 ) {
     try {
-        const { userId } = await auth();
-        if (!userId) {
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
             return NextResponse.json(
                 { message: 'Unauthorized' },
                 { status: 401 }
@@ -16,11 +16,9 @@ export async function GET(
         }
 
         const targetUser = await prisma.user.findFirst({
-            where: { 
-                userName: params.username 
-            },
+            where: { userName: params.username },
             select: {
-                id: true,
+                clerkId: true,
                 _count: {
                     select: {
                         followers: true,
@@ -39,8 +37,8 @@ export async function GET(
 
         const existingFollow = await prisma.follow.findFirst({
             where: {
-                followerId: userId,
-                followingId: targetUser.id
+                followedByUserId: clerkId,
+                followingUserId: targetUser.clerkId
             }
         });
 

@@ -2,11 +2,6 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { prisma } from '~/lib/prisma';
 
-interface UserCounts {
-    followers: Array<{ clerkId: string; userName: string; fullName?: string; image?: string }>;
-    following: Array<{ clerkId: string; userName: string; fullName?: string; image?: string }>;
-}
-
 export async function POST(
     request: Request,
     { params }: { params: { username: string } }
@@ -22,7 +17,7 @@ export async function POST(
 
         const targetUser = await prisma.user.findFirst({
             where: { userName: params.username },
-            select: { clerkId: true } // selecting clerkId as per the schema
+            select: { clerkId: true }
         });
 
         if (!targetUser) {
@@ -34,12 +29,11 @@ export async function POST(
 
         const existingFollow = await prisma.follow.findFirst({
             where: {
-                followerId: clerkId, // current user
-                followingId: targetUser.clerkId // target user
+                followedByUserId: clerkId,
+                followingUserId: targetUser.clerkId
             }
         });
-        
-        // Toggle follow status
+
         if (existingFollow) {
             await prisma.follow.delete({
                 where: { id: existingFollow.id }
@@ -47,36 +41,27 @@ export async function POST(
         } else {
             await prisma.follow.create({
                 data: {
-                    followerId: clerkId,
-                    followingId: targetUser.clerkId
+                    followedByUserId: clerkId,
+                    followingUserId: targetUser.clerkId
                 }
             });
         }
-        
-        // Get updated follower and following counts
+
         const followersCount = await prisma.follow.count({
-            where: {
-                followingId: targetUser.clerkId
-            }
+            where: { followingUserId: targetUser.clerkId }
         });
-        
+
         const followingCount = await prisma.follow.count({
-            where: {
-                followerId: targetUser.clerkId
-            }
+            where: { followedByUserId: clerkId }
         });
-        
-        // Return the counts
+
         return NextResponse.json({
             followed: !existingFollow,
             followersCount,
             followingCount,
         });
     } catch (error) {
-        console.error(
-            'Error toggling follow:',
-            error instanceof Error ? error.message : error
-        );
+        console.error('Error toggling follow:', error);
         return NextResponse.json(
             { message: 'Internal server error' },
             { status: 500 }
