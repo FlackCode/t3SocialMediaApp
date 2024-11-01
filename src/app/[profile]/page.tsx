@@ -11,9 +11,13 @@ import { useState } from "react";
 import { type Post as PostType } from "~/types";
 
 export default function ProfilePage() {
-    const { user, bio, updateBio } = useUserData();
+    const { user, bio, updateBio, followersCount, followingCount, isLoading, error } = useUserData();
     const { posts: myPosts } = useFetchPosts('mine');
     const [showModal, setShowModal] = useState(false);
+
+    if (isLoading) return <div className="text-white">Loading...</div>;
+    if (error) return <div className="text-white">{error}</div>;
+    if (!user) return <div className="text-white">User not found</div>;
 
     return (
         <div className="flex flex-col items-center sm:px-8 md:px-16 lg:px-32 md:py-2">
@@ -47,6 +51,16 @@ export default function ProfilePage() {
                     >
                         <Pencil1Icon className="text-gray-400 w-5 h-5" />
                     </button>
+                </div>
+                <div className="flex ml-4 space-x-4 text-gray-400">
+                    <div>
+                        <span className="font-bold text-white mr-1">{followingCount}</span>
+                        Following
+                    </div>
+                    <div>
+                        <span className="font-bold text-white mr-1">{followersCount}</span>
+                        Followers
+                    </div>
                 </div>
             </div>
             <div className="w-full max-w-2xl bg-neutral-800 p-4 border border-neutral-700">
