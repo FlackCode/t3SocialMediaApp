@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Post, User, Comment, Like } from '../types'; // Adjust the import path as needed
+import { type Post } from '~/types';
 
 interface ApiResponse {
   posts: Post[];

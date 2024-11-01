@@ -30,13 +30,12 @@ model Post {
 
 model User {
     id            String    @id @default(cuid())
-    clerkId       String?   @unique
-    userName      String?
+    clerkId       String    @unique
+    userName      String    @unique
     fullName      String?
     email         String?   @unique
     image         String?
     bio           String?
-    // accounts      Account[]
     sessions      Session[]
     posts         Post[]
     comments      Comment[]
