@@ -1,4 +1,3 @@
-// ~/server/user.ts
 import { useState, useEffect } from 'react';
 import { useUser, useClerk } from "@clerk/nextjs";
 
