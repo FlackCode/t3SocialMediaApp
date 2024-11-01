@@ -5,6 +5,7 @@ export interface Post {
   updatedAt: Date;
   content: string;
   createdById: string;
+  createdBy: User;
   comments: Comment[];
   likes: Like[];
   shares: Share[];

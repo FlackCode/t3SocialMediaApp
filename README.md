@@ -1,6 +1,6 @@
-# 🕹️ T3 Social Media App
+# 🕹️ DevMedia
 
-Welcome to the **T3 Social Media App**! This is a full-stack social media platform built using modern technologies, embracing a retro aesthetic while providing a seamless user experience.
+Welcome to the **DevMedia**! This is a full-stack social media platform built using modern technologies, embracing a retro aesthetic while providing a seamless user experience.
 
 ## 🌟 Features
 

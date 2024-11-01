@@ -8,6 +8,7 @@ import useFetchPosts from "~/hooks/useFetchPosts";
 import Post from "~/components/Post";
 import EditBioModal from "~/components/EditBioModal";
 import { useState } from "react";
+import { type Post as PostType } from "~/types";
 
 export default function ProfilePage() {
     const { user, bio, updateBio } = useUserData();
@@ -59,7 +60,7 @@ export default function ProfilePage() {
                     <h2 className="text-xl font-semibold text-white">Posts</h2>
                 </div>
                 {myPosts.length > 0 ? (
-                    myPosts.map(post => (
+                    myPosts.map((post: PostType) => (
                         <Post key={post.id} post={post} />
                     ))
                 ) : (
