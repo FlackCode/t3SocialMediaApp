@@ -1,24 +1,26 @@
-# Create T3 App
-# Social Media App
+# 🕹️ T3 Social Media App
 
-## Steps
-- [x] Create App
+Welcome to the **T3 Social Media App**! This is a full-stack social media platform built using modern technologies, embracing a retro aesthetic while providing a seamless user experience.
 
-### Backend
-- [x] Create & Update Prisma Schema
-- [x] Add Clerk Auth
-- [x] Add Clerk User to db upon sign-up
-- [x] Add posts functionality
-- [] Handle all interactions
-- [] Add chat/messaging functionality
+## 🌟 Features
 
-### Frontend
-- [x] Nav Bar
-- [x] Profile Page
-- [x] Main Page
-- [x] Login Page/button
-- [] etc...
-- [] etc...
-- [] etc...
-- [] etc...
-- [] etc...
+- **User Authentication**: Secure user authentication using [Clerk](https://clerk.dev).
+- **Database Interactions**: Efficient database queries with Prisma ORM
+- **Responsive Design**: Built with Next.js and Tailwind CSS for a fluid, mobile-first design.
+- **Feed Toggle**: Easy switching between 'For You' and 'Following' posts.
+- **Image Uploads**: Users can upload and manage their profile images.
+
+## 🛠️ Tech Stack
+
+- **USING T3 STACK!**
+
+- **Frontend**: 
+  - [Next.js](https://nextjs.org)
+  - [Tailwind CSS](https://tailwindcss.com)
+  
+- **Backend**:
+  - [Prisma](https://www.prisma.io)
+  - [PostgreSQL](https://www.postgresql.org)
+  
+- **Authentication**:
+  - [Clerk](https://clerk.dev)
