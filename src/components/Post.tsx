@@ -1,13 +1,14 @@
 "use client"
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { HeartIcon, MessageSquareIcon, RepeatIcon, UploadIcon } from "lucide-react";
 import { BookmarkFilledIcon } from '@radix-ui/react-icons';
 import { type CommentWithUser, type PostWithPartialRelations } from "~/types";
 import Link from "next/link";
 import CommentModal from "./CommentModal";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 interface PostProps {
   post: PostWithPartialRelations;
@@ -23,20 +24,45 @@ const formatDate = (dateString: string) => {
 
 export default function Post({ post }: PostProps) {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [likes, setLikes] = useState(post.likes.length);
+  const { userId } = useAuth();
+  const [isLiked, setIsLiked] = useState(post.likes.some(like => like.userId === userId));
   const router = useRouter();
 
-  const handlePostClick = (e: React.MouseEvent) => {
-    // Prevent navigation when clicking interactive elements
+  const handlePostClick = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('button') || 
         (e.target as HTMLElement).closest('a')) {
       return;
     }
     router.push(`/posts/${post.id}`);
-  };
+  }, [post.id, router]);
 
-  const handleCommentSubmit = (newComment: CommentWithUser) => {
+  const handleCommentSubmit = useCallback((newComment: CommentWithUser) => {
     console.log('New comment:', newComment);
-  };
+  }, []);
+
+  const handleLike = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const response = await fetch('/api/likes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ postId: post.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to like/unlike post');
+      }
+
+      const data: { liked: boolean } = await response.json() as { liked: boolean };
+      setIsLiked(data.liked);
+      setLikes(prev => data.liked ? prev + 1 : prev - 1);
+    } catch (error) {
+      console.error('Error liking/unliking post:', error);
+    }
+  }, [post.id]);
 
   return (
     <div 
@@ -96,11 +122,11 @@ export default function Post({ post }: PostProps) {
               <span className="text-sm hidden md:inline">Repost</span>
             </button>
             <button 
-              className="flex items-center gap-1 hover:text-white transition-colors duration-200"
-              onClick={(e) => e.stopPropagation()}
+              className={`flex items-center gap-1 hover:text-white transition-colors duration-200 ${isLiked ? 'text-red-500' : ''}`}
+              onClick={handleLike}
             >
-              <HeartIcon className="w-5 h-5" />
-              <span className="text-sm hidden md:inline">Like ({post.likes.length})</span>
+              <HeartIcon className="w-5 h-5" fill={isLiked ? 'currentColor' : 'none'} />
+              <span className="text-sm hidden md:inline">Like ({likes})</span>
             </button>
           </div>
 
