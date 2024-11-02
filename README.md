@@ -24,3 +24,5 @@ Welcome to the **DevMedia**! This is a full-stack social media platform built us
   
 - **Authentication**:
   - [Clerk](https://clerk.dev)
+
+Extra info: Due to lack of time i will not be implementing messaging, although i know how to do it. Project is finished, learned alot of new stuff and am confident that i can build a good social media with more time in my hands. (school starting soon, less time for coding)

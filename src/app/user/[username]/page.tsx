@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { ArrowLeftIcon, FileTextIcon } from '@radix-ui/react-icons';
-import { useEffect, useState } from "react";
-import { type FollowStatusResponse, type ToggleFollowResponse, type Post as PostType, type User, UserProfileResponse } from "~/types";
+import { useEffect, useState, useCallback } from "react";
+import { type FollowStatusResponse, type ToggleFollowResponse, type Post as PostType, type User, type UserProfileResponse } from "~/types";
 import { useParams, useRouter } from "next/navigation";
 import ClientPost from "~/components/ClientPost";
 
@@ -15,67 +15,84 @@ export default function UserProfilePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isFollowing, setIsFollowing] = useState(false);
-    const [followersCount, setFollowersCount] = useState(0);
-    const [followingCount, setFollowingCount] = useState(0);
+    const [followersCount, setFollowersCount] = useState<number>(0);
+    const [followingCount, setFollowingCount] = useState<number>(0);
+    const [isUpdatingFollow, setIsUpdatingFollow] = useState(false);
     const params = useParams();
     const router = useRouter();
     const username = params.username as string;
 
+    const fetchUserData = useCallback(async () => {
+        try {
+            const [userResponse, followStatusResponse] = await Promise.all([
+                fetch(`/api/user/fetchByUsername/${username}`),
+                fetch(`/api/user/followStatus/${username}`)
+            ]);
+
+            if (!userResponse.ok || !followStatusResponse.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+
+            const userData = await userResponse.json() as UserProfileResponse;
+            const followStatusData = await followStatusResponse.json() as FollowStatusResponse;
+            
+            setUser(userData);
+            setPosts(userData.posts);
+            setLikedPosts(userData.likedPosts);
+            setIsFollowing(followStatusData.isFollowing);
+            setFollowersCount(parseInt(followStatusData.followersCount?.toString() ?? "0", 10));
+            setFollowingCount(parseInt(followStatusData.followingCount?.toString() ?? "0", 10));
+        } catch (err) {
+            setError("Error fetching user data");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    }, [username]);
+
     const handleFollowToggle = async () => {
-        if (!user) return;
+        if (!user || isUpdatingFollow) return;
+    
+        const previousIsFollowing = isFollowing;
+        const previousFollowersCount = followersCount;
     
         try {
+            setIsUpdatingFollow(true);
+            setIsFollowing(!previousIsFollowing);
+            setFollowersCount(previousFollowersCount + (previousIsFollowing ? -1 : 1));
+    
             const response = await fetch(`/api/user/toggleFollow/${username}`, {
                 method: 'POST',
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
             });
     
             if (!response.ok) {
                 throw new Error("Failed to toggle follow status");
             }
     
-            const data = (await response.json()) as ToggleFollowResponse;
-            setIsFollowing(data.followed);
-            setFollowersCount(data.followers);
-            setFollowingCount(data.following);
+            const data = await response.json() as ToggleFollowResponse;
+            
+            const serverFollowers = parseInt(data.followers?.toString() ?? previousFollowersCount.toString(), 10);
+            const serverFollowing = parseInt(data.following?.toString() ?? followingCount.toString(), 10);
+            
+            setFollowersCount(serverFollowers);
+            setFollowingCount(serverFollowing);
+            
+            await fetchUserData();
         } catch (err) {
             console.error("Error toggling follow status", err);
+            setIsFollowing(previousIsFollowing);
+            setFollowersCount(previousFollowersCount);
+        } finally {
+            setIsUpdatingFollow(false);
         }
     };    
     
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const [userResponse, followStatusResponse] = await Promise.all([
-                    fetch(`/api/user/fetchByUsername/${username}`),
-                    fetch(`/api/user/followStatus/${username}`)
-                ]);
-
-                if (!userResponse.ok || !followStatusResponse.ok) {
-                    throw new Error("Failed to fetch user data");
-                }
-
-                const userData = await userResponse.json() as UserProfileResponse;
-                const followStatusData = await followStatusResponse.json() as FollowStatusResponse;
-                
-                setUser({
-                    ...userData,
-                    likedPosts
-                });
-                setPosts(userData.posts);
-                setLikedPosts(userData.likedPosts);
-                setIsFollowing(followStatusData.isFollowing);
-                setFollowersCount(followStatusData.followersCount);
-                setFollowingCount(followStatusData.followingCount);
-            } catch (err) {
-                setError("Error fetching user data");
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         void fetchUserData();
-    }, [username]);
+    }, [fetchUserData]);
 
     if (loading) return <div className="text-white">Loading...</div>;
     if (error) return <div className="text-white">{error}</div>;
@@ -110,15 +127,17 @@ export default function UserProfilePage() {
                         <p className="text-gray-400">@{user.userName}</p>
                     </div>
                     <button 
-                        onClick={handleFollowToggle}
-                        className={`px-4 py-2 rounded-full text-sm font-semibold 
-                            ${isFollowing 
-                                ? 'bg-neutral-700 text-white' 
-                                : 'bg-white text-black hover:bg-gray-200'
-                            }`}
-                    >
-                        {isFollowing ? 'Following' : 'Follow'}
-                    </button>
+            onClick={handleFollowToggle}
+            disabled={isUpdatingFollow}
+            className={`px-4 py-2 rounded-full text-sm font-semibold 
+                ${isUpdatingFollow ? 'opacity-50 cursor-not-allowed' : ''}
+                ${isFollowing 
+                    ? 'bg-neutral-700 text-white' 
+                    : 'bg-white text-black hover:bg-gray-200'
+                }`}
+        >
+            {isUpdatingFollow ? 'Updating...' : (isFollowing ? 'Following' : 'Follow')}
+        </button>
                 </div>
                 <div className="flex ml-4 space-x-4 text-gray-400">
                     <div>
@@ -131,13 +150,13 @@ export default function UserProfilePage() {
                     </div>
                 </div>
             </div>
+
             <div className="w-full max-w-2xl bg-neutral-800 p-4 border border-neutral-700">
                 <div className="flex justify-center items-center">
                     <p className="text-gray-400 text-center">{user.bio ?? "No bio available"}</p>
                 </div>
             </div>
             <div className="w-full md:max-w-2xl bg-neutral-900 border border-neutral-700">
-                {/* Tabs */}
                 <div className="flex justify-around border-b border-neutral-700">
                     <div
                         className={`w-full h-full text-center cursor-pointer hover:bg-neutral-700/20 ${
