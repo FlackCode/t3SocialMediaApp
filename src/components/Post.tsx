@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { HeartIcon, MessageSquareIcon, RepeatIcon, UploadIcon } from "lucide-react";
 import { BookmarkFilledIcon } from '@radix-ui/react-icons';
-import { CommentWithUser, type PostWithPartialRelations } from "~/types";
+import { type CommentWithUser, type PostWithPartialRelations } from "~/types";
 import Link from "next/link";
 import CommentModal from "./CommentModal";
 import { useRouter } from "next/navigation";

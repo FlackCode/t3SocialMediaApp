@@ -1,53 +1,9 @@
-import { notFound } from 'next/navigation';
-import { prisma } from '~/lib/prisma';
 import Post from '~/components/Post';
 import CommentCard from '~/components/CommentCard';
-import { type PostWithPartialRelations } from '~/types';
 import { ArrowLeft, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import NavBar from '~/components/NavBar';
-
-async function getPost(id: string): Promise<PostWithPartialRelations> {
-  const post = await prisma.post.findUnique({
-    where: { id: parseInt(id) },
-    include: {
-      createdBy: {
-        select: {
-          id: true,
-          clerkId: true,
-          userName: true,
-          fullName: true,
-          email: true,
-          image: true,
-          bio: true,
-        }
-      },
-      comments: {
-        include: {
-          createdBy: {
-            select: {
-              id: true,
-              clerkId: true,
-              userName: true,
-              fullName: true,
-              email: true,
-              image: true,
-              bio: true,
-            }
-          },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-      },
-      likes: true,
-      shares: true,
-    },
-  });
-
-  if (!post) notFound();
-  return post as PostWithPartialRelations;
-}
+import { getPost } from '~/lib/db/posts';
 
 export default async function PostPage({ params }: { params: { id: string } }) {
   const post = await getPost(params.id);
