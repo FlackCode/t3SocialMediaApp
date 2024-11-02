@@ -1,9 +1,9 @@
-import Post from '~/components/Post';
 import CommentCard from '~/components/CommentCard';
 import { ArrowLeft, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import NavBar from '~/components/NavBar';
 import { getPost } from '~/lib/db/posts';
+import ClientPost from '~/components/ClientPost';
 
 export default async function PostPage({ params }: { params: { id: string } }) {
   const post = await getPost(params.id);
@@ -20,7 +20,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
             <ArrowLeft className="w-5 h-5" />
             <span>Back to feed</span>
           </Link>
-          <Post post={post} />
+          <ClientPost post={post} />
         </div>
         
         <div className="w-full max-w-2xl bg-neutral-800 p-4 pb-0 border-x border-neutral-700">

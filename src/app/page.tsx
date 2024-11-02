@@ -1,10 +1,11 @@
 "use client"
+
 import NavBar from "~/components/NavBar";
 import { useState } from "react";
 import { useUserData } from "~/server/user";
-import Post from "~/components/Post";
 import useFetchPosts from "~/hooks/useFetchPosts";
 import HomePostForm from "~/components/HomePostForm";
+import ClientPost from "~/components/ClientPost";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
@@ -44,7 +45,7 @@ export default function Home() {
         
           <div className="w-full md:max-w-2xl bg-neutral-900 p-4 border border-neutral-700 space-y-4">
             {displayedPosts.slice(0, visiblePosts).map((post) => (
-              <Post key={post.id} post={post} />
+              <ClientPost key={post.id} post={post} />
             ))}
             {visiblePosts < displayedPosts.length && (
               <button 

@@ -3,9 +3,9 @@
 import Image from "next/image";
 import { ArrowLeftIcon, FileTextIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from "react";
-import Post from "~/components/Post";
 import { type FollowStatusResponse, type ToggleFollowResponse, type Post as PostType, type User } from "~/types";
 import { useParams, useRouter } from "next/navigation";
+import ClientPost from "~/components/ClientPost";
 
 export default function UserProfilePage() {
     const [user, setUser] = useState<User | null>(null);
@@ -137,7 +137,7 @@ export default function UserProfilePage() {
                 </div>
                 {posts.length > 0 ? (
                     posts.map((post: PostType) => (
-                        <Post key={post.id} post={post} />
+                        <ClientPost key={post.id} post={post} />
                     ))
                 ) : (
                     <p className="text-gray-400 text-center">No posts yet</p>

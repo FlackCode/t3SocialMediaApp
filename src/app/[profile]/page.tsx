@@ -5,10 +5,10 @@ import { useUserData } from "~/server/user";
 import { ArrowLeftIcon, Pencil1Icon, FileTextIcon } from '@radix-ui/react-icons';
 import Link from "next/link";
 import useFetchPosts from "~/hooks/useFetchPosts";
-import Post from "~/components/Post";
 import EditBioModal from "~/components/EditBioModal";
 import { useState } from "react";
 import { type Post as PostType } from "~/types";
+import ClientPost from "~/components/ClientPost";
 
 export default function ProfilePage() {
     const { user, bio, updateBio, followersCount, followingCount, isLoading, error } = useUserData();
@@ -75,7 +75,7 @@ export default function ProfilePage() {
                 </div>
                 {myPosts.length > 0 ? (
                     myPosts.map((post: PostType) => (
-                        <Post key={post.id} post={post} />
+                        <ClientPost key={post.id} post={post} />
                     ))
                 ) : (
                     <p className="text-gray-400 text-center">Currently empty...</p>
