@@ -6,7 +6,7 @@ export interface Post {
   content: string;
   createdById: string;
   createdBy: User;
-  comments: Comment[];
+  comments: PostComment[];
   likes: Like[];
   shares: Share[];
 }
@@ -20,7 +20,7 @@ export interface User {
   image?: string | null;
   bio?: string | null;
   posts: Post[];
-  comments: Comment[];
+  comments: PostComment[];
   likes: Like[];
   shares: Share[];
   followers: Follow[];
@@ -29,11 +29,12 @@ export interface User {
   messages: Message[];
 }
 
-export interface Comment {
+export interface PostComment {
   id: number;
   content: string;
   createdAt: Date;
   postId: number;
+  createdBy: User;
   createdById: string;
 }
 
@@ -82,4 +83,27 @@ export interface ToggleFollowResponse {
   followed: boolean;
   followers: number;
   following: number;
+}
+
+export interface CommentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  postId: number;
+  onCommentSubmit: (comment: CommentWithUser) => void;
+}
+
+export interface CommentRequest {
+  postId: number;
+  content: string;
+}
+
+export type UserBasic = Pick<User, 'id' | 'clerkId' | 'userName' | 'fullName' | 'email' | 'image' | 'bio'>;
+
+export interface PostWithPartialRelations extends Omit<Post, 'createdBy' | 'comments'> {
+  createdBy: UserBasic;
+  comments: CommentWithUser[];
+}
+
+export interface CommentWithUser extends Omit<PostComment, 'createdBy'> {
+  createdBy: UserBasic;
 }
