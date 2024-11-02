@@ -27,6 +27,7 @@ export interface User {
   following: Follow[];
   chats: Chat[];
   messages: Message[];
+  likedPosts: Post[];
 }
 
 export interface PostComment {
@@ -106,4 +107,8 @@ export interface PostWithPartialRelations extends Omit<Post, 'createdBy' | 'comm
 
 export interface CommentWithUser extends Omit<PostComment, 'createdBy'> {
   createdBy: UserBasic;
+}
+
+export interface UserProfileResponse extends User {
+  likedPosts: Post[];
 }

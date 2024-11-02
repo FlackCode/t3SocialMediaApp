@@ -3,13 +3,15 @@
 import Image from "next/image";
 import { ArrowLeftIcon, FileTextIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from "react";
-import { type FollowStatusResponse, type ToggleFollowResponse, type Post as PostType, type User } from "~/types";
+import { type FollowStatusResponse, type ToggleFollowResponse, type Post as PostType, type User, UserProfileResponse } from "~/types";
 import { useParams, useRouter } from "next/navigation";
 import ClientPost from "~/components/ClientPost";
 
 export default function UserProfilePage() {
     const [user, setUser] = useState<User | null>(null);
     const [posts, setPosts] = useState<PostType[]>([]);
+    const [likedPosts, setLikedPosts] = useState<PostType[]>([]);
+    const [activeTab, setActiveTab] = useState<'posts' | 'likes'>('posts');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -43,22 +45,24 @@ export default function UserProfilePage() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const [userResponse, postsResponse, followStatusResponse] = await Promise.all([
+                const [userResponse, followStatusResponse] = await Promise.all([
                     fetch(`/api/user/fetchByUsername/${username}`),
-                    fetch(`/api/user/fetchByUsername/${username}/posts`),
                     fetch(`/api/user/followStatus/${username}`)
                 ]);
-    
-                if (!userResponse.ok || !postsResponse.ok || !followStatusResponse.ok) {
+
+                if (!userResponse.ok || !followStatusResponse.ok) {
                     throw new Error("Failed to fetch user data");
                 }
-    
-                const userData = await userResponse.json() as User;
-                const postsData = await postsResponse.json() as PostType[];
+
+                const userData = await userResponse.json() as UserProfileResponse;
                 const followStatusData = await followStatusResponse.json() as FollowStatusResponse;
-                console.log(followStatusData);
-                setUser(userData);
-                setPosts(postsData);
+                
+                setUser({
+                    ...userData,
+                    likedPosts
+                });
+                setPosts(userData.posts);
+                setLikedPosts(userData.likedPosts);
                 setIsFollowing(followStatusData.isFollowing);
                 setFollowersCount(followStatusData.followersCount);
                 setFollowingCount(followStatusData.followingCount);
@@ -69,13 +73,15 @@ export default function UserProfilePage() {
                 setLoading(false);
             }
         };
-    
+
         void fetchUserData();
     }, [username]);
 
     if (loading) return <div className="text-white">Loading...</div>;
     if (error) return <div className="text-white">{error}</div>;
     if (!user) return <div className="text-white">User not found</div>;
+
+    const displayedPosts = activeTab === 'posts' ? posts : likedPosts;
 
     return (
         <div className="flex flex-col items-center sm:px-8 md:px-16 lg:px-32 md:py-2">
@@ -130,18 +136,42 @@ export default function UserProfilePage() {
                     <p className="text-gray-400 text-center">{user.bio ?? "No bio available"}</p>
                 </div>
             </div>
-            <div className="w-full md:max-w-2xl bg-neutral-900 p-4 space-y-4 md:rounded-b-lg border border-neutral-700">
-                <div className="flex items-center gap-2">
-                    <FileTextIcon className="text-gray-400 w-6 h-6" />
-                    <h2 className="text-xl font-semibold text-white">Posts</h2>
+            <div className="w-full md:max-w-2xl bg-neutral-900 border border-neutral-700">
+                {/* Tabs */}
+                <div className="flex justify-around border-b border-neutral-700">
+                    <div
+                        className={`w-full h-full text-center cursor-pointer hover:bg-neutral-700/20 ${
+                            activeTab === 'posts' ? 'bg-neutral-700/20' : ''
+                        }`}
+                        onClick={() => setActiveTab('posts')}>
+                        <h1 className="text-lg text-white font-bold select-none py-2">Posts</h1>
+                    </div>
+                    <div
+                        className={`w-full h-full text-center cursor-pointer hover:bg-neutral-700/20 ${
+                            activeTab === 'likes' ? 'bg-neutral-700/20' : ''
+                        }`}
+                        onClick={() => setActiveTab('likes')}>
+                        <h1 className="text-lg text-white font-bold select-none py-2">Likes</h1>
+                    </div>
                 </div>
-                {posts.length > 0 ? (
-                    posts.map((post: PostType) => (
-                        <ClientPost key={post.id} post={post} />
-                    ))
-                ) : (
-                    <p className="text-gray-400 text-center">No posts yet</p>
-                )}
+
+                <div className="p-4 space-y-4">
+                    <div className="flex items-center gap-2">
+                        <FileTextIcon className="text-gray-400 w-6 h-6" />
+                        <h2 className="text-xl font-semibold text-white">
+                            {activeTab === 'posts' ? 'Posts' : 'Liked Posts'}
+                        </h2>
+                    </div>
+                    {displayedPosts.length > 0 ? (
+                        displayedPosts.map((post: PostType) => (
+                            <ClientPost key={post.id} post={post} />
+                        ))
+                    ) : (
+                        <p className="text-gray-400 text-center">
+                            No {activeTab === 'posts' ? 'posts' : 'liked posts'} yet
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );

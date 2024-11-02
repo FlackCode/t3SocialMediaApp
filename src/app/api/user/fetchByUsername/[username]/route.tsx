@@ -20,6 +20,44 @@ export async function GET(
         fullName: true,
         image: true,
         bio: true,
+        posts: {
+          include: {
+            likes: true,
+            comments: true,
+            shares: true,
+            createdBy: {
+              select: {
+                userName: true,
+                fullName: true,
+                image: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        likes: {
+          include: {
+            post: {
+              include: {
+                likes: true,
+                comments: true,
+                shares: true,
+                createdBy: {
+                  select: {
+                    userName: true,
+                    fullName: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
 
@@ -27,7 +65,13 @@ export async function GET(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    // Transform the likes array to get the posts
+    const likedPosts = user.likes.map(like => like.post);
+
+    return NextResponse.json({
+      ...user,
+      likedPosts,
+    });
   } catch (error) {
     console.error("Error fetching user:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
